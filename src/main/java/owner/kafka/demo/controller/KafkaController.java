@@ -43,10 +43,15 @@ public class KafkaController {
         return "发送成功";
     }
 
+    /**
+     * 同时发送到三个topic中
+     * @param msg
+     * @return
+     */
     @GetMapping("/sendMsgAll")
     @ApiOperation("kafka发送消息控制器3")
     public String sendMsgAll(String msg) {
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 1; i++) {
             orderProducer.sendMsg(msg + i);
             orderProducer.sendMsg2(msg + i);
             orderProducer.sendMsg3(msg + i);

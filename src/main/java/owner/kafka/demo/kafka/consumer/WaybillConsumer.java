@@ -2,10 +2,13 @@ package owner.kafka.demo.kafka.consumer;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.stereotype.Component;
+import owner.kafka.demo.exception.NoWarnException;
+import owner.kafka.demo.service.KafkaConsumerService;
 
 import java.util.Objects;
 
@@ -24,6 +27,8 @@ import java.util.Objects;
 @ConditionalOnProperty(prefix = "spring.kafka.instantiate", name = "enable", havingValue = "true")
 public class WaybillConsumer {
 
+    @Autowired
+    private KafkaConsumerService consumerService;
     /**
      * 当一台服务器，concurrency=1时，验证一个消费组下的一个线程是否串行处理多个topic的任务
      * concurrency可以在配置文件中配置，也可以在注解中配置
@@ -50,14 +55,14 @@ public class WaybillConsumer {
      * @param ack
      */
     //方式一：
-    @KafkaListener(topics = "${spring.kafka.orderTopicLocal}", groupId = "${spring.kafka.consumer.group-id}")
+    /*@KafkaListener(topics = "${spring.kafka.orderTopicLocal}", groupId = "${spring.kafka.consumer.group-id}")
     @KafkaListener(topics = "${spring.kafka.topicOrderTest}", groupId = "${spring.kafka.consumer.group-id}")
-    @KafkaListener(topics = "${spring.kafka.orderTopicTest}", groupId = "${spring.kafka.consumer.group-id}")
+    @KafkaListener(topics = "${spring.kafka.orderTopicTest}", groupId = "${spring.kafka.consumer.group-id}")*/
     //方式二：
-    /*@KafkaListener(topics = {"${spring.kafka.orderTopicTest}",
+    @KafkaListener(topics = {"${spring.kafka.orderTopicTest}",
             "${spring.kafka.orderTopicLocal}",
             "${spring.kafka.topicOrderTest}"},
-            groupId = "${spring.kafka.consumer.group-id}", concurrency = "3")*/
+            groupId = "${spring.kafka.consumer.group-id}", concurrency = "1")
     public void onMessage(ConsumerRecord record, Acknowledgment ack) {
         //log.info("kafka开始接受kafka消息");
         try {
@@ -66,9 +71,15 @@ public class WaybillConsumer {
                 return;
             }
             log.info("kafka消息,record:{}", record);
-            Thread.sleep(2000);
+            consumerService.sing();
         } catch (Exception e) {
+            /**
+             * 如果没有throw，不影响后续消息的消费
+             * 如果有throw，一条消息会重复消费10次，10次之后是丢弃还是依然存在kafka中，待确认
+             * 所以尽量不要throw异常，即便有异常，不要进行重试，不要影响正常消息的消费,否则会造成消息的积压
+             */
             log.error("fatalError,WaybillConsumer处理消息异常e:", e);
+            //throw new NoWarnException("消费kafka异常");
         } finally {
             ack.acknowledge();
         }
