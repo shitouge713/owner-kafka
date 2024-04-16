@@ -1,0 +1,35 @@
+server:
+  port: 8091
+
+spring:
+  application:
+    name: owner-kafka
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    driverClassName: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://10.100.19.122:3306/h_order?useUnicode=true&characterEncoding=UTF-8&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=GMT%2b8&allowMultiQueries=true
+    username: devops
+    password: 12345678
+  kafka:
+    orderTopicTest: order_topic_test1
+    topicOrderTest: topic_order_test1
+    orderTopicLocal: order_topic_local1
+    bootstrap-servers: 127.0.0.1:9092
+    producer:
+      retries: 3
+      acks: all
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+    consumer:
+      group-id: order_topic_sxl
+      auto-offset-reset: earliest
+      enable-auto-commit: false
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    listener:
+      ack-mode: manual_immediate
+      concurrency: 3
+      missing-topics-fatal: false
+      type: single
+    instantiate:
+      enable: true
