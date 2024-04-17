@@ -6,7 +6,7 @@ spring:
     name: owner-kafka
   kafka:
     orderTopicTest: order_topic_test1
-    topicOrderTest: topic_order_test1
+    topicOrderTest: topic_order_test2
     orderTopicLocal: order_topic_local1
     bootstrap-servers: 127.0.0.1:9092
     producer:

@@ -55,15 +55,15 @@ public class WaybillConsumer {
      * @param ack
      */
     //方式一：
-    /*@KafkaListener(topics = "${spring.kafka.orderTopicLocal}", groupId = "${spring.kafka.consumer.group-id}")
+    @KafkaListener(topics = "${spring.kafka.orderTopicLocal}", groupId = "${spring.kafka.consumer.group-id}")
     @KafkaListener(topics = "${spring.kafka.topicOrderTest}", groupId = "${spring.kafka.consumer.group-id}")
-    @KafkaListener(topics = "${spring.kafka.orderTopicTest}", groupId = "${spring.kafka.consumer.group-id}")*/
+    @KafkaListener(topics = "${spring.kafka.orderTopicTest}", groupId = "${spring.kafka.consumer.group-id}")
     //方式二：
-    @KafkaListener(topics = {
+    /*@KafkaListener(topics = {
             "${spring.kafka.orderTopicTest}",
             "${spring.kafka.orderTopicLocal}",
             "${spring.kafka.topicOrderTest}"},
-            groupId = "${spring.kafka.consumer.group-id}", concurrency = "1")
+            groupId = "${spring.kafka.consumer.group-id}", concurrency = "1")*/
     public void onMessage(ConsumerRecord record, Acknowledgment ack) {
         //log.info("kafka开始接受kafka消息");
         try {
@@ -82,7 +82,7 @@ public class WaybillConsumer {
              * 3. 能否使用多线程进行消费（多线程处理时要注意其他内存、cpu等问题）
              * 如果是调用三方接口，要设置好接口超时时间，不能一直消耗在接口调用上游方面
              */
-            consumerService.sing();
+            //consumerService.sing();
         } catch (Exception e) {
             /**
              * 如果没有throw，不影响后续消息的消费
@@ -93,7 +93,7 @@ public class WaybillConsumer {
              *
              */
             log.error("fatalError,WaybillConsumer处理消息异常e:", e);
-            throw new NoWarnException("消费kafka异常");
+            //throw new NoWarnException("消费kafka异常");
         } finally {
             ack.acknowledge();
         }
