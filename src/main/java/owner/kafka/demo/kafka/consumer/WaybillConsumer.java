@@ -59,7 +59,8 @@ public class WaybillConsumer {
     @KafkaListener(topics = "${spring.kafka.topicOrderTest}", groupId = "${spring.kafka.consumer.group-id}")
     @KafkaListener(topics = "${spring.kafka.orderTopicTest}", groupId = "${spring.kafka.consumer.group-id}")*/
     //方式二：
-    @KafkaListener(topics = {"${spring.kafka.orderTopicTest}",
+    @KafkaListener(topics = {
+            "${spring.kafka.orderTopicTest}",
             "${spring.kafka.orderTopicLocal}",
             "${spring.kafka.topicOrderTest}"},
             groupId = "${spring.kafka.consumer.group-id}", concurrency = "1")
@@ -71,15 +72,28 @@ public class WaybillConsumer {
                 return;
             }
             log.info("kafka消息,record:{}", record);
+            /**
+             * 思考：
+             * 耗时的消息如何处理？单个耗时消息不要影响后续的正常消息消费
+             * 场景：算法识别用旷世还是云丛，以来识别同步接口的返回结果
+             * 先用云丛识别，云丛识别失败，再次用旷世识别（这个时间就会变大）
+             * 1. 能否在处理消息前就能判断出来消息是否耗时
+             * 2. 耗时的操作超过一定时间能否中断，将消息存储到耗时topic
+             * 3. 能否使用多线程进行消费（多线程处理时要注意其他内存、cpu等问题）
+             * 如果是调用三方接口，要设置好接口超时时间，不能一直消耗在接口调用上游方面
+             */
             consumerService.sing();
         } catch (Exception e) {
             /**
              * 如果没有throw，不影响后续消息的消费
-             * 如果有throw，一条消息会重复消费10次，10次之后是丢弃还是依然存在kafka中，待确认
+             * 如果有throw，一条消息会重复消费10次，准确讲应该是1次正常调用+9次重试，后续重试是什么原理？
              * 所以尽量不要throw异常，即便有异常，不要进行重试，不要影响正常消息的消费,否则会造成消息的积压
+             * 思考：异常的消息如何处理？
+             * 1、不进行重试
+             *
              */
             log.error("fatalError,WaybillConsumer处理消息异常e:", e);
-            //throw new NoWarnException("消费kafka异常");
+            throw new NoWarnException("消费kafka异常");
         } finally {
             ack.acknowledge();
         }
