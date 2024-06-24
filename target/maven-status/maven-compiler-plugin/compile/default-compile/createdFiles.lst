@@ -1,4 +1,5 @@
 owner\kafka\demo\kafka\producer\OrderProducer$1.class
+owner\kafka\demo\config\KafkaConsumerConfig.class
 owner\kafka\demo\service\KafkaConsumerServiceImpl.class
 owner\kafka\demo\kafka\consumer\WaybillConsumer.class
 owner\kafka\demo\OwnerKafkaApplication.class

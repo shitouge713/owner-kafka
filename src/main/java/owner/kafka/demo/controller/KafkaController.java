@@ -13,15 +13,14 @@ import owner.kafka.demo.kafka.producer.OrderProducer;
 @Api(tags = "kafka发送消息控制器", consumes = "application/json")
 public class KafkaController {
 
+
     @Autowired
     private OrderProducer orderProducer;
 
     @GetMapping("/sendMsg")
     @ApiOperation("kafka发送消息控制器")
     public String sendMsg(String msg) {
-        for (int i = 0; i < 10; i++) {
-            orderProducer.sendMsg(msg + i);
-        }
+        orderProducer.sendMsg(msg);
         return "发送成功";
     }
 
@@ -45,6 +44,7 @@ public class KafkaController {
 
     /**
      * 同时发送到三个topic中
+     *
      * @param msg
      * @return
      */

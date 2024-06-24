@@ -90,11 +90,13 @@ public class WaybillConsumer {
              * 所以尽量不要throw异常，即便有异常，不要进行重试，不要影响正常消息的消费,否则会造成消息的积压
              * 思考：异常的消息如何处理？
              * 1、不进行重试
-             *
+             * 2、打印错误日志+异常报警，人工接入
+             * 3、消息写入到死信队列
              */
             log.error("fatalError,WaybillConsumer处理消息异常e:", e);
             //throw new NoWarnException("消费kafka异常");
         } finally {
+            //这句话表示，无论消息消费成功与否，都会提交ack
             ack.acknowledge();
         }
     }

@@ -1,6 +1,7 @@
 D:\owner-project\owner-code\owner-kafka\src\main\java\owner\kafka\demo\service\KafkaConsumerService.java
 D:\owner-project\owner-code\owner-kafka\src\main\java\owner\kafka\demo\OwnerKafkaApplication.java
 D:\owner-project\owner-code\owner-kafka\src\main\java\owner\kafka\demo\kafka\consumer\WaybillConsumer.java
+D:\owner-project\owner-code\owner-kafka\src\main\java\owner\kafka\demo\config\KafkaConsumerConfig.java
 D:\owner-project\owner-code\owner-kafka\src\main\java\owner\kafka\demo\enums\ReturnStatusEnum.java
 D:\owner-project\owner-code\owner-kafka\src\main\java\owner\kafka\demo\kafka\producer\OrderProducer.java
 D:\owner-project\owner-code\owner-kafka\src\main\java\owner\kafka\demo\service\KafkaConsumerServiceImpl.java
